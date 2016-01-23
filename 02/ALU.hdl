@@ -69,5 +69,12 @@ CHIP ALU {
 
     // Negate out?
     Not16(in=out0, out=nout0);
-    Mux16(a=out0, b=nout0, sel=no, out=out);
+    // this also splits up output for checking if zero and if negative
+    Mux16(a=out0, b=nout0, sel=no, out=out, out[15]=ng, out[0..7]=lower, out[8..15]=upper);
+
+    // Zero???
+    Or8Way(in=lower, out=or0);
+    Or8Way(in=upper, out=or1);
+    Or(a=or0, b=or1, out=notzero);
+    Not(in=notzero, out=zr);
 }
