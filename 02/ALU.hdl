@@ -44,27 +44,17 @@ CHIP ALU {
     PARTS:
     // Put you code here:
 
-    // x -> x1 (optionally zero)
-    Not16(in=x, out=notx0);
-    And16(a=x, b=notx0, out=zero);
-    Mux16(a=x, b=zero, sel=zx, out=x1);
+    // Preprocess x
+    Not16(in=x, out=notx);
+    Mux4Way16(a=x, b=notx, c=false, d=true, sel[0]=nx, sel[1]=zx, out=x0);
 
-    // x1 -> x2 (negate?)
-    Not16(in=x1, out=nx1);
-    Mux16(a=x1, b=nx1, sel=nx, out=x2);
-
-    // y -> y1 (optionally zero)
-    // Not16(in=y, out=noty0);
-    // And16(a=y, b=noty0, out=zero);
-    Mux16(a=y, b=zero, sel=zy, out=y1);
-
-    // y1 -> y2 (negate?)
-    Not16(in=y1, out=ny1);
-    Mux16(a=y1, b=ny1, sel=ny, out=y2);
+    // Preprocess y
+    Not16(in=y, out=noty);
+    Mux4Way16(a=y, b=noty, c=false, d=true, sel[0]=ny, sel[1]=zy, out=y0);
 
     // Main computation
-    Add16(a=x2, b=y2, out=xaddy);
-    And16(a=x2, b=y2, out=xandy);
+    Add16(a=x0, b=y0, out=xaddy);
+    And16(a=x0, b=y0, out=xandy);
     Mux16(a=xandy, b=xaddy, sel=f, out=out0);
 
     // Negate out?
